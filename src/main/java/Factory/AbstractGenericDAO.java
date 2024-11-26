@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractGenericDAO<T> implements GenericDAO<T> {
-    private static final String URL = "jdbc:mysql://localhost:3306/houseofsound";
+    private static final String URL = "jdbc:mysql://localhost:3306/houseofsounds";
     private static final String USER = "root";
     private static final String PASSWORD = "";
 

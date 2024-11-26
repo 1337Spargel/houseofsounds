@@ -1,54 +1,82 @@
 import Factory.*;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Main {
-    private static final Map<Integer, Class<?>> tableOptions = new HashMap<>();
+    private static final CopyOnWriteArrayList<Kunden> kundenList = new CopyOnWriteArrayList<>();
+    private static final CopyOnWriteArrayList<Produkte> produkteList = new CopyOnWriteArrayList<>();
 
-    static {
-        tableOptions.put(1, Lager.class);
-        tableOptions.put(2, PLZ.class);
-        tableOptions.put(3, Produkte.class);
-        tableOptions.put(4, Rabatt.class);
-        tableOptions.put(5, Kunden.class);
-        tableOptions.put(6, Standort.class);
+    private static final GenericDAO<Kunden> kundenDAO = DAOFactory.getDAO(Kunden.class);
+    private static final GenericDAO<Produkte> produkteDAO = DAOFactory.getDAO(Produkte.class);
+
+    private static volatile boolean isRunning = false;
+    private static Thread dataLoaderThread;
+
+    public static void startDataLoader() {
+        if (isRunning) return;
+
+        isRunning = true;
+        dataLoaderThread = new Thread(() -> {
+            while (isRunning) {
+                try {
+
+                    kundenList.clear();
+                    produkteList.clear();
+
+                    kundenList.addAll(kundenDAO.getAll());
+                    produkteList.addAll(produkteDAO.getAll());
+
+                    System.out.println("Daten aktualisiert: " +
+                            kundenList.size() + " Kunden, " +
+                            produkteList.size() + " Produkte");
+
+                    Thread.sleep(5000); // Wartezeit
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    isRunning = false;
+                }
+            }
+        });
+
+        dataLoaderThread.setDaemon(true);
+        dataLoaderThread.start();
+    }
+
+    public static void stopDataLoader() {
+        isRunning = false;
+        if (dataLoaderThread != null) {
+            dataLoaderThread.interrupt();
+        }
+    }
+
+    public static void clearKundenList() {
+        kundenList.clear();
+    }
+
+    public static void clearProdukteList() {
+        produkteList.clear();
+    }
+
+    public static List<Kunden> getKundenList() {
+        return kundenList;
+    }
+
+    public static List<Produkte> getProdukteList() {
+        return produkteList;
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        boolean running = true;
+        System.out.println("Runtime Data Loader gestartet");
+        startDataLoader();
 
-        while (running) {
-            System.out.println("Welche Tabelle möchten Sie anzeigen?");
-            tableOptions.forEach((key, value) -> System.out.println(key + ". " + value.getSimpleName()));
-            System.out.println((tableOptions.size() + 1) + ". Beenden");
-            System.out.print("Bitte wählen Sie eine Option: ");
-
-            int choice = scanner.nextInt();
-            if (choice == tableOptions.size() + 1) {
-                running = false;
-            } else {
-                Class<?> clazz = tableOptions.get(choice);
-                if (clazz != null) {
-                    printTable(clazz);
-                } else {
-                    System.out.println("Ungültige Auswahl. Bitte versuchen Sie es erneut.");
-                }
+        try {
+            while (isRunning) {
+                Thread.sleep(1000);
             }
-        }
-        scanner.close();
-    }
-
-    private static <T> void printTable(Class<T> clazz) {
-        GenericDAO<T> dao = DAOFactory.getDAO(clazz);
-        List<T> records = dao.getAll();
-
-        for (T record : records) {
-            System.out.println(record.toString());
-            System.out.println("---------------------------");
+        } catch (InterruptedException e) {
+            System.out.println("Runtime Data Loader wurde gestoppt");
+        } finally {
+            stopDataLoader();
         }
     }
 }
