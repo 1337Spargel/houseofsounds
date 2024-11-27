@@ -35,12 +35,13 @@ public abstract class AbstractGenericDAO<T> implements GenericDAO<T> {
 
     @Override
     public T getById(int id) {
+        // Implementiere die Methode, um eine Entität nach ID zu holen
         return null;
     }
 
     @Override
     public void save(T entity) {
-
+        // Implementiere die Methode, um eine Entität zu speichern
     }
 
     @Override

@@ -6,6 +6,7 @@ public class KundenDaoImplement extends AbstractGenericDAO<Kunden> {
     @Override
     protected Kunden mapResultSetToEntity(ResultSet resultSet) throws Exception {
         Kunden kunde = new Kunden();
+        kunde.setKunden_ID(resultSet.getInt("kunden_id"));
         kunde.setVorname(resultSet.getString("vorname"));
         kunde.setNachname(resultSet.getString("nachname"));
         kunde.setStraße(resultSet.getString("straße"));
@@ -18,4 +19,6 @@ public class KundenDaoImplement extends AbstractGenericDAO<Kunden> {
     protected String getTableName() {
         return "Kunden";
     }
+
+
 }
