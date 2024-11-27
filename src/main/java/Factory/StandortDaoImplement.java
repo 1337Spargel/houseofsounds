@@ -1,4 +1,5 @@
 package Factory;
+
 import java.sql.ResultSet;
 
 public class StandortDaoImplement extends AbstractGenericDAO<Standort> {

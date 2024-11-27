@@ -28,11 +28,4 @@ public class PLZ {
     public void setORT(String ORT) {
         this.ORT = ORT;
     }
-
-    @Override
-        public String toString() {
-            return  "PLZ ID: " + PLZ_ID +
-                    ", PLZ: " + PLZ +
-                    ", Ort: " + ORT;
-    }
 }

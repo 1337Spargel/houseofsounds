@@ -6,6 +6,7 @@ import java.util.List;
 import Factory.Kunden;
 import Factory.Produkte;
 
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
@@ -31,10 +32,12 @@ public class Application {
 
                 if (!isRuntimeActive) {
                     Main.clearKundenList();
+                    Main.clearProdukteList();
 
                 }
 
                 kunden = Main.getKundenList();
+
 
                 if (kunden.isEmpty()) {
                     sendResponse(exchange, 404, "Keine Kunden-Daten verfügbar");
@@ -42,6 +45,20 @@ public class Application {
                     System.out.println("Daten für Kunden-API: " + gson.toJson(kunden));
                     sendJsonResponse(exchange, 200, kunden);
                 }
+            } else if ("POST".equals(exchange.getRequestMethod())) {
+                try {
+                    String requestBody = new String(exchange.getRequestBody().readAllBytes());
+                    Kunden newKunde = gson.fromJson(requestBody, Kunden.class);
+                    Main.kundenDAO.save(newKunde);
+
+                    sendJsonResponse(exchange, 201, "Kunde erfolgreich hinzugefügt");
+
+                } catch (Exception e) {
+                    sendResponse(exchange, 400, "Fehler beim Hinzufügen des Kunden: " + e.getMessage());
+
+                }
+
+
             } else {
                 sendResponse(exchange, 405, "Method Not Allowed");
             }
@@ -64,36 +81,91 @@ public class Application {
                     System.out.println("Daten für Produkte-API: " + gson.toJson(produkte));
                     sendJsonResponse(exchange, 200, produkte);
                 }
+            } else if ("POST".equals(exchange.getRequestMethod())) {
+                try {
+                    String requestBody = new String(exchange.getRequestBody().readAllBytes());
+                    Produkte newProdukte = gson.fromJson(requestBody, Produkte.class);
+                    Main.produkteDAO.save(newProdukte);
+
+                    sendJsonResponse(exchange, 201, "Produkt erfolgreich hinzugefügt");
+
+                } catch (Exception e) {
+                    sendResponse(exchange, 400, "Fehler beim Hinzufügen des Kunden: " + e.getMessage());
+
+                }
             } else {
                 sendResponse(exchange, 405, "Method Not Allowed");
             }
         });
 
-        //server.createContext("/api/runtime-status", exchange -> {
-        //    if ("GET".equals(exchange.getRequestMethod())) {
-        //        sendJsonResponse(exchange, 200, "{\"isActive\": " + isRuntimeActive + "}");
-        //    } else {
-        //        sendResponse(exchange, 405, "Method Not Allowed");
-        //    }
-        //});
+        server.createContext("/api/items/kunden/update", exchange -> {
+            if ("PUT".equals(exchange.getRequestMethod())) {
+                try {
+                    // Request Body auslesen
+                    String requestBody = new String(exchange.getRequestBody().readAllBytes());
+
+                    // JSON in Kunden-Objekt umwandeln
+                    Kunden updateKunde = gson.fromJson(requestBody, Kunden.class);
+
+                    // Überprüfen, ob eine ID vorhanden ist
+                    if (updateKunde.getKunden_ID() == -1) {
+                        sendResponse(exchange, 400, "Keine Kunden-ID für Update angegeben");
+                        return;
+                    }
+
+                    // Versuch des Updates über DAO
+                    Kunden updatedKunde = Main.kundenDAO.update(updateKunde);
+
+
+                    if (updatedKunde != null) {
+                        // Erfolgreiches Update
+                        sendJsonResponse(exchange, 200, updatedKunde);
+                    } else {
+                        // Kunde nicht gefunden
+                        sendResponse(exchange, 404, "Kunde wurde geupdatet");
+                    }
+
+                } catch (Exception e) {
+                    sendResponse(exchange, 500, "Fehler beim Update des Kunden: " + e.getMessage());
+                }
+            } else {
+                sendResponse(exchange, 405, "Method Not Allowed");
+            }
+        });
+
+        server.createContext("/api/items/produkte/update", exchange -> {
+            if ("PUT".equals(exchange.getRequestMethod())) {
+                try {
+                    // Request Body auslesen
+                    String requestBody = new String(exchange.getRequestBody().readAllBytes());
+
+                    // JSON in Produkte-Objekt umwandeln
+                    Produkte updateProdukt = gson.fromJson(requestBody, Produkte.class);
+
+                    // Überprüfen, ob eine ID vorhanden ist
+                    if (updateProdukt.getProdukte_ID() == null) {
+                        sendResponse(exchange, 400, "Keine Produkt-ID für Update angegeben");
+                        return;
+                    }
+
+                    //// Versuch des Updates über DAO
+                    //Produkte updatedProdukt = Main.produkteDAO.update(updateProdukt);
 //
-        //server.createContext("/api/set-runtime-status", exchange -> {
-        //    if ("POST".equals(exchange.getRequestMethod())) {
-//
-        //        String body = new String(exchange.getRequestBody().readAllBytes());
-        //        isRuntimeActive = Boolean.parseBoolean(body);
-//
-        //        if (!isRuntimeActive) {
-        //            Main.stopDataLoader();
-        //        } else {
-        //            Main.startDataLoader();
-        //        }
-//
-        //        sendResponse(exchange, 200, "Runtime status updated to: " + isRuntimeActive);
-        //    } else {
-        //        sendResponse(exchange, 405, "Method Not Allowed");
-        //    }
-        //});
+                    //if (updatedProdukt != null) {
+                    //    // Erfolgreiches Update
+                    //    sendJsonResponse(exchange, 200, updatedProdukt);
+                    //} else {
+                    //    // Produkt nicht gefunden
+                    //    sendResponse(exchange, 404, "Produkt nicht gefunden");
+                    //}
+
+                } catch (Exception e) {
+                    sendResponse(exchange, 500, "Fehler beim Update des Produkts: " + e.getMessage());
+                }
+            } else {
+                sendResponse(exchange, 405, "Method Not Allowed");
+            }
+        });
 
         server.setExecutor(null);
         server.start();
