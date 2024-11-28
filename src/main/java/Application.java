@@ -114,16 +114,10 @@ public class Application {
                     }
 
                     // Versuch des Updates über DAO
-                    Kunden updatedKunde = Main.kundenDAO.update(updateKunde);
+                    Main.kundenDAO.update(updateKunde);
 
 
-                    if (updatedKunde != null) {
-                        // Erfolgreiches Update
-                        sendJsonResponse(exchange, 200, updatedKunde);
-                    } else {
-                        // Kunde nicht gefunden
-                        sendResponse(exchange, 404, "Kunde wurde geupdatet");
-                    }
+                    sendJsonResponse(exchange, 200, "Kunde erfolgreich aktualisiert");
 
                 } catch (Exception e) {
                     sendResponse(exchange, 500, "Fehler beim Update des Kunden: " + e.getMessage());
@@ -143,21 +137,15 @@ public class Application {
                     Produkte updateProdukt = gson.fromJson(requestBody, Produkte.class);
 
                     // Überprüfen, ob eine ID vorhanden ist
-                    if (updateProdukt.getProdukte_ID() == null) {
+                    if (updateProdukt.getProdukte_ID() == -1) {
                         sendResponse(exchange, 400, "Keine Produkt-ID für Update angegeben");
                         return;
                     }
 
-                    //// Versuch des Updates über DAO
-                    //Produkte updatedProdukt = Main.produkteDAO.update(updateProdukt);
-//
-                    //if (updatedProdukt != null) {
-                    //    // Erfolgreiches Update
-                    //    sendJsonResponse(exchange, 200, updatedProdukt);
-                    //} else {
-                    //    // Produkt nicht gefunden
-                    //    sendResponse(exchange, 404, "Produkt nicht gefunden");
-                    //}
+                    // Versuch des Updates über DAO
+                    Main.produkteDAO.update(updateProdukt);
+
+                    sendJsonResponse(exchange, 200, "Produkt erfolgreich aktualisiert");
 
                 } catch (Exception e) {
                     sendResponse(exchange, 500, "Fehler beim Update des Produkts: " + e.getMessage());
