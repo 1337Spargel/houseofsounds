@@ -2,16 +2,16 @@ package Factory;
 
 public class Produkte {
 
-    private String Produkte_ID;
+    private int Produkte_ID;
     private double Preis;
     private int Rabatt_ID;
 
     // Getter und Setter
-    public String getProdukte_ID() {
+    public int getProdukte_ID() {
         return Produkte_ID;
     }
 
-    public void setProdukte_ID(String produkte_ID) {
+    public void setProdukte_ID(int produkte_ID) {
         this.Produkte_ID = produkte_ID;
     }
 

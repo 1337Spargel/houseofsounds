@@ -102,7 +102,7 @@ public abstract class AbstractGenericDAO<T> implements GenericDAO<T> {
     }
 
     @Override
-    public Kunden update(T entity) {
+    public void update(T entity) {
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
             // Primärschlüsselfeld finden
             Field primaryKeyField = findPrimaryKeyField(entity.getClass());
@@ -174,19 +174,21 @@ public abstract class AbstractGenericDAO<T> implements GenericDAO<T> {
             e.printStackTrace();
         }
 
-        return null;
+
     }
 
 
     // Helper method to find primary key field
     private Field findPrimaryKeyField(Class<?> clazz) {
         for (Field field : clazz.getDeclaredFields()) {
-            if (field.getName().equalsIgnoreCase("kunden_ID")) { // Nach Feldnamen suchen
+            // Überprüfen, ob der Feldname mit "ID" endet (z.B. "kunden_ID" oder "produkte_ID")
+            if (field.getName().toUpperCase().endsWith("ID")) {
                 return field;
             }
         }
         return null;
     }
+
 
 
 
