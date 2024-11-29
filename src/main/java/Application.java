@@ -2,10 +2,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.List;
-
 import Factory.*;
-;
-
 import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -271,6 +268,7 @@ public class Application {
             }
         });
 
+
         server.createContext("/api/items/standort/update", exchange -> {
             if ("PUT".equals(exchange.getRequestMethod())) {
                 try {
@@ -354,6 +352,7 @@ public class Application {
                 sendResponse(exchange, 405, "Method Not Allowed");
             }
         });
+
 
         server.createContext("/api/items/kunden/delete", exchange -> {
             if ("DELETE".equals(exchange.getRequestMethod())) {
@@ -478,6 +477,7 @@ public class Application {
             }
 
         });
+
 
         server.createContext("/api/items/{type}/{id}", exchange -> {
             if ("GET".equals(exchange.getRequestMethod())) {

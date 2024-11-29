@@ -1,5 +1,4 @@
 import Factory.*;
-
 import java.sql.SQLRecoverableException;
 import java.util.List;
 import java.util.Stack;
@@ -134,12 +133,14 @@ public class Main {
         Lager newLager = new Lager();
         lagerDAO.save(newLager);
 
+
         //Kunde/Produkt löschen
         Kunden deleteKunde = new Kunden();
         kundenDAO.delete(deleteKunde);
 
         Produkte deleteProdukt = new Produkte();
         produkteDAO.delete(deleteProdukt);
+
 
         Standort deleteStandort = new Standort();
         standortDAO.delete((deleteStandort));
@@ -149,6 +150,7 @@ public class Main {
 
         Lager deleteLager = new Lager();
         lagerDAO.delete(deleteLager);
+
 
     }
 }
