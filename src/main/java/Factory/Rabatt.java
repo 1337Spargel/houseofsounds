@@ -38,5 +38,12 @@ public class Rabatt {
         this.Dauer = Dauer;
     }
 
+    @Override
+        public String toString() {
+        return  "Rabatt ID: " + Rabatt_ID +
+                ", Rabattcode: " + Rabattcode +
+                ", Höhe Rabatt: " + Hoehe_Rabatt +
+                ", Dauer: " + Dauer;
+    }
 }
 

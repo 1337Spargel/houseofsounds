@@ -1,3 +1,4 @@
+
 package Factory;
 
 import java.util.List;
@@ -15,4 +16,3 @@ public interface GenericDAO<T> {
 
     void delete(T entity);
 }
-
