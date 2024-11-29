@@ -9,44 +9,33 @@ public class Standort {
 
 
     // Getter und Setter
-    public int getStandort_ID() {
-        return Standort_ID;
-    }
+    public int getStandort_ID() { return Standort_ID; }
+    public void setStandort_ID(int standort_ID) { this.Standort_ID = standort_ID; }
 
-    public void setStandort_ID(int standort_ID) {
-        this.Standort_ID = standort_ID;
-    }
+    public String getStandortname() { return Standortname; }
+    public void setStandortname(String standortname) { this.Standortname = standortname; }
 
-    public String getStandortname() {
-        return Standortname;
-    }
+    public String getStraße() { return Straße; }
+    public void setStraße(String straße) { this.Straße = straße; }
 
-    public void setStandortname(String standortname) {
-        this.Standortname = standortname;
-    }
+    public String getHausnummer() { return Hausnummer; }
+    public void setHausnummer(String hausnummer) { this.Hausnummer = hausnummer; }
 
-    public String getStraße() {
-        return Straße;
-    }
+    public int getPLZ_ID() { return PLZ_ID; }
+    public void setPLZ_ID(int PLZ_ID) { this.PLZ_ID = PLZ_ID; }
 
-    public void setStraße(String straße) {
-        this.Straße = straße;
-    }
 
-    public String getHausnummer() {
-        return Hausnummer;
+        @Override
+        public String toString() {
+            return  " Standort ID: " + Standort_ID +
+                    ", Standortname: " + Standortname +
+                    ", Straße: " + Straße +
+                    ", Hausnummer: " + Hausnummer +
+                    ", PLZ_ID: " + PLZ_ID;
+        }
     }
+/*
+    public String getOrt() { return Ort; }
+    public void setOrt(String ort) { this.Ort = ort; }
 
-    public void setHausnummer(String hausnummer) {
-        this.Hausnummer = hausnummer;
-    }
-
-    public int getPLZ_ID() {
-        return PLZ_ID;
-    }
-
-    public void setPLZ_ID(int PLZ_ID) {
-        this.PLZ_ID = PLZ_ID;
-    }
-
-}
+ */
