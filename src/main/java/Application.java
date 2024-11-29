@@ -6,7 +6,6 @@ import java.util.List;
 import Factory.Kunden;
 import Factory.Produkte;
 
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
@@ -33,7 +32,6 @@ public class Application {
                 if (!isRuntimeActive) {
                     Main.clearKundenList();
                     Main.clearProdukteList();
-
                 }
 
                 kunden = Main.getKundenList();
@@ -154,6 +152,92 @@ public class Application {
                 sendResponse(exchange, 405, "Method Not Allowed");
             }
         });
+
+        server.createContext("/api/items/kunden/delete", exchange -> {
+            if ("DELETE".equals(exchange.getRequestMethod())) {
+                try {
+                    String requestBody = new String(exchange.getRequestBody().readAllBytes());
+
+                    Kunden deleteKunde = gson.fromJson(requestBody, Kunden.class);
+
+                    if (deleteKunde.getKunden_ID() == -1) {
+                        sendResponse(exchange, 400, "Keine Kunden-ID für Delete angegeben");
+                        return;
+                    }
+
+                    Main.kundenDAO.delete(deleteKunde);
+
+                    sendJsonResponse(exchange, 200, "Kunde erfolgreich gelöscht");
+
+                } catch (Exception e) {
+                    sendResponse(exchange, 500, "Fehler beim Löschen des Kunden: " + e.getMessage());
+                }
+            } else {
+                sendResponse(exchange, 405, "Method not allowed");
+            }
+        });
+
+        server.createContext("/api/items/produkte/delete", exchange -> {
+            if ("DELETE".equals(exchange.getRequestMethod())) {
+
+                try {
+                    String requestBody = new String(exchange.getRequestBody().readAllBytes());
+
+                    Produkte deleteProdukt = gson.fromJson(requestBody, Produkte.class);
+
+                    if (deleteProdukt.getProdukte_ID() == -1) {
+                        sendResponse(exchange, 400, "Keine Produkt-ID für Delete angegeben");
+                        return;
+                    }
+
+                    Main.produkteDAO.delete(deleteProdukt);
+
+                    sendJsonResponse(exchange, 200, "Produkt erfolgreich gelöscht");
+                } catch (Exception e) {
+                    sendJsonResponse(exchange, 500, "Fehler beim Löschen des Produkt: " + e.getMessage());
+                }
+            } else {
+                sendResponse(exchange, 405, "Method not allowed");
+            }
+
+        });
+
+
+        server.createContext("/api/items/{type}/{id}", exchange -> {
+            if ("GET".equals(exchange.getRequestMethod())) {
+                try {
+                    // Extrahiere den Entitätstyp (z.B. "kunden" oder "produkte") aus der URL
+                    String type = exchange.getRequestURI().getPath().split("/")[3];
+                    int id = Integer.parseInt(exchange.getRequestURI().getPath().split("/")[4]);
+
+                    // Den passenden DAO anhand des Entitätstyps finden
+                    Object entity = null;
+                    if ("kunden".equalsIgnoreCase(type)) {
+                        // Dynamisch die Methode getById aus dem KundenDAO aufrufen
+                        entity = Main.kundenDAO.getById(id);
+                    } else if ("produkte".equalsIgnoreCase(type)) {
+                        // Dynamisch die Methode getById aus dem ProdukteDAO aufrufen
+                        entity = Main.produkteDAO.getById(id);
+                    }
+
+                    if (entity != null) {
+                        sendJsonResponse(exchange, 200, entity);
+                    } else {
+                        sendResponse(exchange, 404, "Entität nicht gefunden");
+                    }
+
+                } catch (NumberFormatException e) {
+                    sendResponse(exchange, 400, "Ungültige ID");
+                }
+            } else {
+                sendResponse(exchange, 405, "Method Not Allowed");
+            }
+        });
+
+
+        server.setExecutor(null);
+        server.start();
+        System.out.println("REST-API läuft auf Port " + serverPort);
 
         server.setExecutor(null);
         server.start();

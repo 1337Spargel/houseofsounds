@@ -1,4 +1,5 @@
 import Factory.*;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -80,12 +81,19 @@ public class Main {
             stopDataLoader();
         }
 
+        //neuen Kunden/Produkte anlegen
         Kunden newKunde = new Kunden();
-        // Set Kunde properties
         kundenDAO.save(newKunde);
 
         Produkte newProdukt = new Produkte();
         produkteDAO.save(newProdukt);
+
+        //Kunde/Produkt löschen
+        Kunden deleteKunde = new Kunden();
+        kundenDAO.delete(deleteKunde);
+
+        Produkte deleteProdukt = new Produkte();
+        produkteDAO.delete(deleteProdukt);
 
 
     }
