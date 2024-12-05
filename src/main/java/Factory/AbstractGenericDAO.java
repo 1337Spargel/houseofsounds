@@ -6,10 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class AbstractGenericDAO<T> implements GenericDAO<T> {
-    private static final String URL = "jdbc:mysql://localhost:3306/houseofsound";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
+
 
     protected abstract T mapResultSetToEntity(ResultSet resultSet) throws Exception;
 
